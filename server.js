@@ -78,6 +78,6 @@ const server = http.createServer((req, res) => {
   });
 });
 
-server.listen(80, "localhost", () => {
+server.listen(80, "34.78.88.177", () => {
   console.log("Listening on port 80");
 });
