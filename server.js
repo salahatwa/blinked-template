@@ -8,7 +8,9 @@ const fs = require("fs");
 //npm i mime-types
 const lookup = require("mime-types").lookup;
 
+console.log('Init  request....');
 const server = http.createServer((req, res) => {
+    console.log('Received request....');
   //handle the request and send back a static file
   //from a folder called `public`
   let parsedURL = url.parse(req.url, true);
