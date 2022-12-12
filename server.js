@@ -39,7 +39,7 @@ const server = http.createServer((req, res) => {
   );
 
   console.log(req.headers);
-  var userAgent = req.headers['X-Real-IP']; 
+  var userAgent = req.headers['x-custom-referrer']; 
 
   console.log("userAgent:",userAgent);
   console.log("Template Path:", host);
