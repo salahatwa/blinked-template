@@ -38,6 +38,10 @@ const server = http.createServer((req, res) => {
     }
   );
 
+  console.log(req.headers);
+  var userAgent = req.headers['X-Real-IP']; 
+
+  console.log("userAgent:",userAgent);
   console.log("Template Path:", host);
   console.log("Subdomain:", subDomain);
   console.log("Subdomain length:", subDomain.length);

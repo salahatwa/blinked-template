@@ -1,0 +1,26 @@
+server {
+    listen 80;
+    listen [::]:80;
+
+    server_name ~^(?<subdomain>.+)\.zattona\.com zattona.com;
+
+    location /{
+            set $backend_url "http://$subdomain.localhost:8082";
+            proxy_pass $backend_url;
+            proxy_http_version 1.1;
+            proxy_set_header Upgrade $http_upgrade;
+            proxy_set_header connection "upgrade";
+            proxy_set_header X-Real-IP $backend_url;
+    }
+
+    location /ssatwa {
+            root /var/www/site;
+            try_files $uri $uri/ /index.html;
+    }
+
+}
+
+// sudo nano /etc/nginx/sites-available/zattona.com
+// sudo ln -s /etc/nginx/sites-available/zattona.com /etc/nginx/sites-enabled/
+// sudo nginx -t
+// sudo systemctl restart nginx
