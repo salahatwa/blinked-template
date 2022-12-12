@@ -39,12 +39,10 @@ const server = http.createServer((req, res) => {
   );
 
   console.log(req.headers);
-  var userAgent = req.headers['x-custom-referrer']; 
+  var templateName = req.headers['x-custom-referrer']; 
 
-  console.log("userAgent:",userAgent);
+  console.log("Subdomain:",templateName);
   console.log("Template Path:", host);
-  console.log("Subdomain:", subDomain);
-  console.log("Subdomain length:", subDomain.length);
   console.log("Protocol:", protocol);
   //   console.log(req);
   /**
@@ -59,7 +57,7 @@ const server = http.createServer((req, res) => {
   }
   console.log(`Requested path ${path} `);
 
-  let file = __dirname + "/templates/" + subDomain + "/" + path;
+  let file = __dirname + "/templates/" + templateName + "/" + path;
   console.log(__dirname);
   //async read file function uses callback
   fs.readFile(file, function (err, content) {
