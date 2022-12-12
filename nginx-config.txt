@@ -4,17 +4,35 @@ server {
 
     server_name ~^(?<subdomain>.+)\.zattona\.com zattona.com;
 
+
+    location /api {
+          proxy_pass    http://localhost:8083;
+          proxy_set_header    Host               $host;
+          proxy_set_header    X-Real-IP          $remote_addr;
+          proxy_set_header    X-Forwarded-For    $proxy_add_x_forwarded_for;
+          proxy_set_header    X-Forwarded-Host   $host;
+          proxy_set_header    X-Forwarded-Server $host;
+          proxy_set_header    X-Forwarded-Port   $server_port;
+          proxy_set_header    X-Forwarded-Proto  $scheme;        
+    }
+
+     location /swagger {
+          proxy_pass    http://localhost:8083/swagger-ui.html;
+          proxy_set_header    Host               $host;
+          proxy_set_header    X-Real-IP          $remote_addr;
+          proxy_set_header    X-Forwarded-For    $proxy_add_x_forwarded_for;
+          proxy_set_header    X-Forwarded-Host   $host;
+          proxy_set_header    X-Forwarded-Server $host;
+          proxy_set_header    X-Forwarded-Port   $server_port;
+          proxy_set_header    X-Forwarded-Proto  $scheme;        
+    }
+
     location /{
             proxy_pass http://localhost:8082;
             proxy_http_version 1.1;
             proxy_set_header Upgrade $http_upgrade;
             proxy_set_header connection "upgrade";
             proxy_set_header X-Custom-Referrer $subdomain;
-    }
-
-    location /ssatwa {
-            root /var/www/site;
-            try_files $uri $uri/ /index.html;
     }
 }
 
