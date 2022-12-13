@@ -39,7 +39,7 @@ const server = http.createServer((req, res) => {
     }
   );
 
-  console.log("Headers:", req.headers);
+  // console.log("Headers:", req.headers);
   console.log("Subdomain:", usrId);
   console.log("Template Path:", host);
   console.log("Protocol:", protocol);
@@ -54,9 +54,15 @@ const server = http.createServer((req, res) => {
   if (path == "") {
     path = "index.html";
   }
+
+  if (usrId==undefined||usrId==null||usrId=='') {
+    usrId = "main";
+  }
+
   console.log(`Requested path ${path} `);
 
   let file = __dirname + "/templates/" + usrId + "/" + path;
+
   console.log(__dirname);
   //async read file function uses callback
   fs.readFile(file, function (err, content) {
@@ -73,8 +79,9 @@ const server = http.createServer((req, res) => {
       res.end(content);
     }
   });
+
 });
 
 server.listen(8082, "127.0.0.1", () => {
-  console.log("Listening on port 80");
+  console.log("Listening on port 8082");
 });
