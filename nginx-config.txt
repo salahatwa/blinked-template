@@ -1,38 +1,57 @@
 server {
-    listen 80;
-    listen [::]:80;
+  listen 80;
+  listen [::]:80;
+  server_name ~^(?<subdomain>.+)\.zattona\.com zattona.com;
+  return 301 https://$host$request_uri;
+}
+server {
+  listen 443 ssl;
+  server_name ~^(?<subdomain>.+)\.zattona\.com zattona.com;
+  listen [::]:443 ssl ipv6only=on; # managed by Certbot
+  ssl_certificate /etc/letsencrypt/live/zattona.com/fullchain.pem; # managed by Certbot
+  ssl_certificate_key /etc/letsencrypt/live/zattona.com/privkey.pem; # managed by Certbot
+  include /etc/letsencrypt/options-ssl-nginx.conf; # managed by Certbot
+  ssl_dhparam /etc/letsencrypt/ssl-dhparams.pem; # managed by Certbot
 
-    server_name ~^(?<subdomain>.+)\.zattona\.com zattona.com;
-
-
-    location /api {
-          proxy_pass    http://localhost:8083;
+ location / {
+          proxy_pass    http://localhost:8082;
           proxy_set_header    Host               $host;
           proxy_set_header    X-Real-IP          $remote_addr;
           proxy_set_header    X-Forwarded-For    $proxy_add_x_forwarded_for;
           proxy_set_header    X-Forwarded-Host   $host;
           proxy_set_header    X-Forwarded-Server $host;
           proxy_set_header    X-Forwarded-Port   $server_port;
-          proxy_set_header    X-Forwarded-Proto  $scheme;        
-    }
-
-     location /swagger {
-          proxy_pass    http://localhost:8083/swagger-ui.html;
+          proxy_set_header    X-Forwarded-Proto  $scheme;
+          proxy_set_header    X-Custom-Referrer  $subdomain;
           proxy_http_version 1.1;
           proxy_set_header Upgrade $http_upgrade;
           proxy_set_header connection "upgrade";
-    }
-
-    location /{
-            proxy_pass http://localhost:8082;
-            proxy_http_version 1.1;
-            proxy_set_header Upgrade $http_upgrade;
-            proxy_set_header connection "upgrade";
-            proxy_set_header X-Custom-Referrer $subdomain;
-    }
+  }
 }
 
+
+// cd /etc/nginx/sites-available/
 // sudo nano /etc/nginx/sites-available/zattona.com
 // sudo ln -s /etc/nginx/sites-available/zattona.com /etc/nginx/sites-enabled/
 // sudo nginx -t
 // sudo systemctl restart nginx
+
+
+
+// enable https
+
+// https://www.nginx.com/blog/using-free-ssltls-certificates-from-lets-encrypt-with-nginx/
+
+-- sudo certbot --nginx -d zattona.com -d www.zattona.com -d *.zattona.com
+
+sudo certbot certonly \
+  --agree-tos \
+  --email salahsayedatwa@gmail.com \
+  --manual \
+  --preferred-challenges=dns \
+  -d *.zattona.com \
+  -d zattona.com \
+  --server https://acme-v02.api.letsencrypt.org/directory
+
+
+https://tecadmin.net/auto-renew-lets-encrypt-certificates/
